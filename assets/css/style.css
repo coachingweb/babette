@@ -303,3 +303,5 @@ details>summary::-webkit-details-marker{display:none}
 .ray {
   animation: pulseRay 4s ease-in-out infinite;
 }
+/* Kontakt: Fehlerbox nie anzeigen */
+#errorbox { display: none !important; }
