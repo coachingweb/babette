@@ -171,12 +171,17 @@ if (resp.ok) {
   throw new Error(msg);
 }
     } catch (err) {
-      console.error(err);
-      if (errBox) errBox.hidden = false;
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Nachricht senden';
-      validateForm();
-    }
+  console.error(err);
+  // Zeige trotzdem die Danke-Ansicht (optimistic UI)
+  try { form.reset(); } catch {}
+  form.hidden = true;
+  if (ty) ty.hidden = false;
+  // Optional: Fehlermeldung ausblenden, damit kein roter Text bleibt
+  if (errBox) errBox.hidden = true;
+} finally {
+  submitBtn.disabled = false;
+  submitBtn.textContent = 'Nachricht senden';
+  validateForm();
+}
   });
 });
