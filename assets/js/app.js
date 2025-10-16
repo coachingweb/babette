@@ -160,13 +160,14 @@ const okFlag =
     text.trim().toLowerCase() === 'ok' ||
     Object.keys(data).length === 0
   );
-
-if (okFlag) {
+if (resp.ok) {
   if (errBox) errBox.hidden = true;
+  try { form.reset(); } catch {}
   form.hidden = true;
   if (ty) ty.hidden = false;
 } else {
-  const msg = data.error || data.message || (`HTTP ${resp.status} ${resp.statusText}`);
+  const txt = await resp.text().catch(() => '');
+  const msg = `HTTP ${resp.status} ${resp.statusText}` + (txt ? ` – ${txt.slice(0,120)}` : '');
   throw new Error(msg);
 }
     } catch (err) {
