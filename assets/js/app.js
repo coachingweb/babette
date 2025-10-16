@@ -145,13 +145,30 @@ document.addEventListener('DOMContentLoaded', () => {
         body
       });
 
-      const data = await resp.json().catch(() => ({}));
-      if (resp.ok && data.ok) {
-        form.hidden = true;
-        if (ty) ty.hidden = false;
-      } else {
-        throw new Error(data.error || 'Unbekannter Fehler');
-      }
+      // Antwort erst als Text lesen, dann (falls möglich) JSON parsen
+const text = await resp.text();
+let data = {};
+try { data = JSON.parse(text); } catch {}
+
+// „ok“ akzeptieren wir in mehreren Varianten,
+// außerdem gilt: HTTP 200 ohne Fehltext = ok
+const okFlag =
+  resp.ok && (
+    data.ok === true ||
+    data.success === true ||
+    data.status === 'ok' ||
+    text.trim().toLowerCase() === 'ok' ||
+    Object.keys(data).length === 0
+  );
+
+if (okFlag) {
+  if (errBox) errBox.hidden = true;
+  form.hidden = true;
+  if (ty) ty.hidden = false;
+} else {
+  const msg = data.error || data.message || (`HTTP ${resp.status} ${resp.statusText}`);
+  throw new Error(msg);
+}
     } catch (err) {
       console.error(err);
       if (errBox) errBox.hidden = false;
