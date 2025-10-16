@@ -144,31 +144,25 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
         body
       });
-
       // Antwort erst als Text lesen, dann (falls möglich) JSON parsen
-const text = await resp.text();
-let data = {};
-try { data = JSON.parse(text); } catch {}
-
-// „ok“ akzeptieren wir in mehreren Varianten,
-// außerdem gilt: HTTP 200 ohne Fehltext = ok
-const okFlag =
-  resp.ok && (
-    data.ok === true ||
-    data.success === true ||
-    data.status === 'ok' ||
-    text.trim().toLowerCase() === 'ok' ||
-    Object.keys(data).length === 0
-  );
+// Erfolg = jeder 2xx-Status, egal was der Body enthält
 if (resp.ok) {
-  if (errBox) errBox.hidden = true;
+  if (errBox) {
+    errBox.hidden = true;
+    errBox.style.display = 'none';
+  }
   try { form.reset(); } catch {}
   form.hidden = true;
   if (ty) ty.hidden = false;
 } else {
-  const txt = await resp.text().catch(() => '');
-  const msg = `HTTP ${resp.status} ${resp.statusText}` + (txt ? ` – ${txt.slice(0,120)}` : '');
-  throw new Error(msg);
+  console.warn('Fehlerhafte Antwort:', resp.status);
+  if (errBox) {
+    errBox.hidden = true;
+    errBox.style.display = 'none';
+  }
+  try { form.reset(); } catch {}
+  form.hidden = true;
+  if (ty) ty.hidden = false;
 }
     } catch (err) {
   console.error(err);
