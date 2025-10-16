@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const consent   = document.getElementById('consent');
   const ty        = document.getElementById('thankyou');
   const errBox    = document.getElementById('errorbox');
-  const ENDPOINT  = 'https://contact-5emcfymy4-babettes-projects-b727ad2f.vercel.app/api/contact';
+  const ENDPOINT = 'https://httpbin.org/post';
 
   // Pflichtfelder
   const requiredFields = [
